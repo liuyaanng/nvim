@@ -367,6 +367,7 @@ func! CompileRunGcc()
 	elseif &filetype == 'tex'
 		silent! exec "VimtexStop"
 		silent! exec "VimtexCompile"
+		silent! exec "VimtexView"
 	elseif &filetype == 'dart'
 		exec "CocCommand flutter.run -d ".g:flutter_default_device
 		silent! exec "CocCommand flutter.dev.openDevLog"
@@ -447,7 +448,7 @@ Plug 'cohama/agit.vim'
 Plug 'Chiel92/vim-autoformat'
 
 " Tex
-" Plug 'lervag/vimtex'
+Plug 'lervag/vimtex'
 
 " CSharp
 " Plug 'OmniSharp/omnisharp-vim'
@@ -996,11 +997,40 @@ noremap <LEADER>gi :FzfGitignore<CR>
 " === vimtex
 " ===
 "let g:vimtex_view_method = ''
-let g:vimtex_view_general_viewer = 'llpp'
-let g:vimtex_mappings_enabled = 0
-let g:vimtex_text_obj_enabled = 0
-let g:vimtex_motion_enabled = 0
-let maplocalleader=' '
+" let g:vimtex_view_general_viewer = 'llpp'
+let g:tex_flavor = 'latex'
+let g:vimtex_quickfix_mode = 0
+" let g:vimtex_mappings_enabled = 0
+" let g:vimtex_text_obj_enabled = 0
+" let g:vimtex_motion_enabled = 0
+" let maplocalleader=' '
+
+let g:vimtex_view_general_viewer
+\ = '/Applications/Skim.app/Contents/SharedSupport/displayline'
+let g:vimtex_view_general_options = '-r @line @pdf @tex'
+
+" This adds a callback hook that updates Skim after compilation
+let g:vimtex_compiler_callback_hooks = ['UpdateSkim']
+
+function! UpdateSkim(status)
+if !a:status | return | endif
+
+let l:out = b:vimtex.out()
+let l:tex = expand('%:p')
+let l:cmd = [g:vimtex_view_general_viewer, '-r']
+
+if !empty(system('pgrep Skim'))
+call extend(l:cmd, ['-g'])
+endif
+
+if has('nvim')
+call jobstart(l:cmd + [line('.'), l:out, l:tex])
+elseif has('job')
+call job_start(l:cmd + [line('.'), l:out, l:tex])
+else
+call system(join(l:cmd + [line('.'), shellescape(l:out), shellescape(l:tex)], ' '))
+endif
+endfunction
 
 
 " ===
