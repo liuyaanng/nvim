@@ -35,7 +35,7 @@ source $XDG_CONFIG_HOME/nvim/_machine_specific.vim
 " ===
 " === System
 " ===
-"set clipboard=unnamedplus
+"set clipboard=unnamed
 let &t_ut=''
 set autochdir
 
@@ -43,8 +43,7 @@ set autochdir
 " ===
 " === Editor behavior
 " ===
-set exrc
-set secure
+set laststatus=2
 set number
 set relativenumber
 set cursorline
@@ -55,8 +54,8 @@ set shiftwidth=2
 set softtabstop=2
 set autoindent
 set list
-set listchars=tab:\|\ ,trail:▫
-set scrolloff=4
+set listchars=tab:▸\ ,trail:▫
+set scrolloff=5
 set ttimeoutlen=0
 set notimeout
 set viewoptions=cursor,folds,slash,unix
@@ -139,20 +138,24 @@ noremap S :w<CR>
 
 " Open the vimrc file anytime
 noremap <LEADER>rc :e ~/.config/nvim/init.vim<CR>
-noremap <LEADER>rv :e .nvimrc<CR>
 
 " Undo operations
-noremap l u
+"noremap l u
+" Undo in Insert mode
+inoremap <C-l> <C-u>
 
 " Insert Key
-noremap k i
-noremap K I
+noremap n i
+noremap N I
 
-" make Y to copy till the end of the line
-nnoremap Y y$
+
 
 " Copy to system clipboard
-vnoremap Y "+y
+vnoremap Y :w !pbcopy<CR><CR>
+"noremap P :r !pbpaste<CR><CR>
+
+" Joining lines
+noremap H J
 
 " Indentation
 nnoremap < <<
@@ -184,26 +187,23 @@ noremap <c-g> :tabe<CR>:-tabmove<CR>:term lazygit<CR>
 " ===
 " New cursor movement (the default arrow keys are used for resizing windows)
 "     ^
-"     u
-" < n   i >
-"     e
+"     i
+" < j   l >
+"     k
 "     v
-noremap <silent> u k
-noremap <silent> n h
-noremap <silent> e j
-noremap <silent> i l
-noremap <silent> gu gk
-noremap <silent> ge gj
-noremap <silent> \v v$h
+noremap <silent> i k
+noremap <silent> j h
+noremap <silent> k j
+"noremap <silent> l l
 
 " U/E keys for 5 times u/e (faster navigation)
-noremap <silent> U 5k
-noremap <silent> E 5j
+noremap <silent> I 5k
+noremap <silent> K 5j
 
 " N key: go to the start of the line
-noremap <silent> N 0
+noremap <silent> J 0
 " I key: go to the end of the line
-noremap <silent> I $
+noremap <silent> L $
 
 " Faster in-line navigation
 noremap W 5w
@@ -213,8 +213,8 @@ noremap B 5b
 noremap h e
 
 " Ctrl + U or E will move up/down the view port without moving the cursor
-noremap <C-U> 5<C-y>
-noremap <C-E> 5<C-e>
+noremap <C-I> 5<C-y>
+noremap <C-K> 5<C-e>
 
 
 source $XDG_CONFIG_HOME/nvim/cursor.vim
@@ -228,14 +228,21 @@ inoremap <C-a> <ESC>A
 " ===
 " === Command Mode Cursor Movement
 " ===
-cnoremap <C-a> <Home>
-cnoremap <C-e> <End>
-cnoremap <C-p> <Up>
-cnoremap <C-n> <Down>
-cnoremap <C-b> <Left>
-cnoremap <C-f> <Right>
-cnoremap <M-b> <S-Left>
-cnoremap <M-w> <S-Right>
+" cnoremap <C-a> <Home>
+" cnoremap <C-l> <End>
+" cnoremap <C-p> <Up>
+" cnoremap <C-n> <Down>
+" cnoremap <C-b> <Left>
+" cnoremap <C-f> <Right>
+" cnoremap <M-b> <S-Left>
+" cnoremap <M-w> <S-Right>
+
+
+" ===
+" === Searching
+" ===
+noremap - N
+noremap = n
 
 
 " ===
@@ -243,20 +250,19 @@ cnoremap <M-w> <S-Right>
 " ===
 " Use <space> + new arrow keys for moving the cursor around windows
 noremap <LEADER>w <C-w>w
-noremap <LEADER>u <C-w>k
-noremap <LEADER>e <C-w>j
-noremap <LEADER>n <C-w>h
-noremap <LEADER>i <C-w>l
-noremap qf <C-w>o
+noremap <LEADER>i <C-w>k
+noremap <LEADER>k <C-w>j
+noremap <LEADER>j <C-w>h
+noremap <LEADER>l <C-w>l
 
 " Disable the default s key
 noremap s <nop>
 
 " split the screens to up (horizontal), down (horizontal), left (vertical), right (vertical)
-noremap su :set nosplitbelow<CR>:split<CR>:set splitbelow<CR>
-noremap se :set splitbelow<CR>:split<CR>
-noremap sn :set nosplitright<CR>:vsplit<CR>:set splitright<CR>
-noremap si :set splitright<CR>:vsplit<CR>
+noremap si :set nosplitbelow<CR>:split<CR>:set splitbelow<CR>
+noremap sk :set splitbelow<CR>:split<CR>
+noremap sj :set nosplitright<CR>:vsplit<CR>:set splitright<CR>
+noremap sl :set splitright<CR>:vsplit<CR>
 
 " Resize splits with arrow keys
 noremap <up> :res +5<CR>
@@ -283,11 +289,11 @@ noremap <LEADER>q <C-w>j:q<CR>
 " Create a new tab with tu
 noremap tu :tabe<CR>
 " Move around tabs with tn and ti
-noremap tn :-tabnext<CR>
-noremap ti :+tabnext<CR>
+noremap tj :-tabnext<CR>
+noremap tl :+tabnext<CR>
 " Move the tabs with tmn and tmi
-noremap tmn :-tabmove<CR>
-noremap tmi :+tabmove<CR>
+noremap tmj :-tabmove<CR>
+noremap tml :+tabmove<CR>
 
 
 " ===
@@ -298,21 +304,25 @@ source $XDG_CONFIG_HOME/nvim/md-snippets.vim
 " auto spell
 autocmd BufRead,BufNewFile *.md setlocal spell
 
-
 " ===
 " === Other useful stuff
 " ===
 " Open a new instance of st with the cwd
-"nnoremap \t :tabe<CR>:-tabmove<CR>:term sh -c 'st'<CR><C-\><C-N>:q<CR>
+" nnoremap \t :tabe<CR>:-tabmove<CR>:term sh -c 'st'<CR><C-\><C-N>:q<CR>
+
+" Move the next character to the end of the line with ctrl+9
+inoremap <C-u> <ESC>lx$p
 
 " Opening a terminal window
 noremap <LEADER>/ :set splitbelow<CR>:split<CR>:res +10<CR>:term<CR>
 
-" Press space twice to jump to the next '<++>' and edit it
+" Press space twice to jump to the next '' and edit it
 noremap <LEADER><LEADER> <Esc>/<++><CR>:nohlsearch<CR>c4l
 
 " Spelling Check with <space>sc
-noremap <LEADER>sc :set spell!<CR>
+map <LEADER>sc :set spell!<CR>
+noremap <C-x> ea<C-x>s
+inoremap <C-x> <Esc>ea<C-x>s
 
 " Press ` to change case (instead of ~)
 noremap ` ~
@@ -323,7 +333,7 @@ noremap <C-c> zz
 autocmd BufEnter * silent! lcd %:p:h
 
 " Call figlet
-noremap tx :r !figlet 
+noremap tx :r !figlet
 
 " find and replace
 noremap \s :%s//g<left><left>
@@ -332,11 +342,9 @@ noremap \s :%s//g<left><left>
 noremap <LEADER>sw :set wrap<CR>
 
 " press f10 to show hlgroup
-function! SynGroup()
-	let l:s = synID(line('.'), col('.'), 1)
-	echo synIDattr(l:s, 'name') . ' -> ' . synIDattr(synIDtrans(l:s), 'name')
-endfun
-map <F10> :call SynGroup()<CR>
+map <F10> :echo "hi<" . synIDattr(synID(line("."),col("."),1),"name") . '> trans<'
+\ . synIDattr(synID(line("."),col("."),0),"name") . "> lo<"
+\ . synIDattr(synIDtrans(synID(line("."),col("."),1)),"name") . ">"<CR>
 
 " Compile function
 noremap r :call CompileRunGcc()<CR>
@@ -359,7 +367,7 @@ func! CompileRunGcc()
 	elseif &filetype == 'python'
 		set splitbelow
 		:sp
-		:term python3 %
+		:term python3 
 	elseif &filetype == 'html'
 		silent! exec "!".g:mkdp_browser." % &"
 	elseif &filetype == 'markdown'
@@ -403,6 +411,7 @@ Plug 'theniceboy/vim-deus'
 
 " Status line
 Plug 'theniceboy/eleline.vim'
+" Plug 'liuchengxu/eleline.vim'
 Plug 'ojroques/vim-scrollstatus'
 
 " General Highlighter
@@ -450,8 +459,8 @@ Plug 'Chiel92/vim-autoformat'
 " Plug 'lervag/vimtex'
 
 " CSharp
-" Plug 'OmniSharp/omnisharp-vim'
-" Plug 'ctrlpvim/ctrlp.vim' , { 'for': ['cs', 'vim-plug'] } " omnisharp-vim dependency
+Plug 'OmniSharp/omnisharp-vim'
+Plug 'ctrlpvim/ctrlp.vim' , { 'for': ['cs', 'vim-plug'] } " omnisharp-vim dependency
 
 " HTML, CSS, JavaScript, Typescript, PHP, JSON, etc.
 Plug 'elzr/vim-json'
@@ -479,12 +488,12 @@ Plug 'Vimjas/vim-python-pep8-indent', { 'for' :['python', 'vim-plug'] }
 Plug 'tweekmonster/braceless.vim', { 'for' :['python', 'vim-plug'] }
 
 " Flutter
-" Plug 'dart-lang/dart-vim-plugin'
-" Plug 'f-person/pubspec-assist-nvim', { 'for' : ['pubspec.yaml'] }
+Plug 'dart-lang/dart-vim-plugin'
+Plug 'f-person/pubspec-assist-nvim', { 'for' : ['pubspec.yaml'] }
 
 " Swift
-" Plug 'keith/swift.vim'
-" Plug 'arzg/vim-swift'
+Plug 'keith/swift.vim'
+Plug 'arzg/vim-swift'
 
 " Markdown
 Plug 'iamcco/markdown-preview.nvim', { 'do': { -> mkdp#util#install_sync() }, 'for' :['markdown', 'vim-plug'] }
@@ -501,7 +510,7 @@ Plug 'dkarter/bullets.vim'
 Plug 'jiangmiao/auto-pairs'
 Plug 'mg979/vim-visual-multi'
 Plug 'tomtom/tcomment_vim' " in <space>cn to comment a line
-Plug 'liuyaanng/antovim' " gs to switch
+Plug 'theniceboy/antovim' " gs to switch
 Plug 'tpope/vim-surround' " type yskw' to wrap the word with '' or type cs'` to change 'word' to `word`
 Plug 'gcmt/wildfire.vim' " in Visual mode, type k' to select all text in '', or type k) k] k} kp
 Plug 'junegunn/vim-after-object' " da= to delete what's after =
@@ -541,9 +550,9 @@ Plug 'skywind3000/asyncrun.vim'
 Plug 'itchyny/calendar.vim'
 
 " Other visual enhancement
+Plug 'ryanoasis/vim-devicons'
 Plug 'luochen1990/rainbow'
 Plug 'mg979/vim-xtabline'
-Plug 'ryanoasis/vim-devicons'
 Plug 'wincent/terminus'
 
 " Other useful utilities
@@ -645,8 +654,8 @@ let g:coc_global_extensions = [
 	\ 'coc-translator',
 	\ 'coc-tslint-plugin',
 	\ 'coc-tsserver',
-	\ 'coc-vetur',
 	\ 'coc-vimlsp',
+	\ 'coc-vetur',
 	\ 'coc-yaml',
 	\ 'coc-yank']
 inoremap <silent><expr> <TAB>
@@ -671,7 +680,7 @@ function! Show_documentation()
 endfunction
 nnoremap <LEADER>h :call Show_documentation()<CR>
 
-nnoremap <silent><nowait> <LEADER>dn :CocList diagnostics<cr>
+nnoremap <silent><nowait> <LEADER>d :CocList diagnostics<cr>
 nmap <silent> <LEADER>- <Plug>(coc-diagnostic-prev)
 nmap <silent> <LEADER>= <Plug>(coc-diagnostic-next)
 nnoremap <c-c> :CocCommand<CR>
@@ -687,11 +696,10 @@ omap ac <Plug>(coc-classobj-a)
 " Useful commands
 nnoremap <silent> <space>y :<C-u>CocList -A --normal yank<cr>
 nmap <silent> gd <Plug>(coc-definition)
-nmap <silent> gD :tab sp<CR><Plug>(coc-definition)
 nmap <silent> gy <Plug>(coc-type-definition)
 " nmap <silent> gi <Plug>(coc-implementation)
 nmap <silent> gr <Plug>(coc-references)
-nmap <LEADER>rn <Plug>(coc-rename)
+nmap <leader>rn <Plug>(coc-rename)
 nmap tt :CocCommand explorer<CR>
 " coc-translator
 nmap ts <Plug>(coc-translator-p)
@@ -699,12 +707,12 @@ nmap ts <Plug>(coc-translator-p)
 function! s:cocActionsOpenFromSelected(type) abort
   execute 'CocCommand actions.open ' . a:type
 endfunction
-xmap <leader>a  <Plug>(coc-codeaction-selected)
-nmap <leader>aw  <Plug>(coc-codeaction-selected)w
+xmap <silent> <leader>a :<C-u>execute 'CocCommand actions.open ' . visualmode()<CR>
+nmap <silent> <leader>a :<C-u>set operatorfunc=<SID>cocActionsOpenFromSelected<CR>g@
 " coctodolist
-" nnoremap <leader>tn :CocCommand todolist.create<CR>
-" nnoremap <leader>tl :CocList todolist<CR>
-" nnoremap <leader>tu :CocCommand todolist.download<CR>:CocCommand todolist.upload<CR>
+nnoremap <leader>tn :CocCommand todolist.create<CR>
+nnoremap <leader>tl :CocList todolist<CR>
+nnoremap <leader>tu :CocCommand todolist.download<CR>:CocCommand todolist.upload<CR>
 " coc-tasks
 noremap <silent> <leader>ts :CocList tasks<CR>
 " coc-snippets
@@ -717,12 +725,7 @@ let g:snips_author = 'GeekOcean'
 autocmd BufRead,BufNewFile tsconfig.json set filetype=jsonc
 
 
-
-" " ===
-" " === braceless
-" " ===
-autocmd FileType python BracelessEnable +indent +highlight-cc2
-
+"
 " " ===
 " " === vim-instant-markdown
 " " ===
@@ -773,14 +776,14 @@ let g:table_mode_cell_text_object_i_map = 'k<Bar>'
 " === FZF
 " ===
 set rtp+=/usr/local/opt/fzf
-"set rtp+=/home/linuxbrew/.linuxbrew/opt/fzf
+" set rtp+=/home/linuxbrew/.linuxbrew/opt/fzf
 "set rtp+=/home/david/.linuxbrew/opt/fzf
-nnoremap <c-p> :Leaderf file<CR>
 " noremap <silent> <C-p> :Files<CR>
+noremap <silent> <C-p> :Leaderf file<CR>
 noremap <silent> <C-f> :Rg<CR>
 noremap <silent> <C-h> :History<CR>
-"noremap <C-t> :BTags<CR>
-" noremap <silent> <C-l> :Lines<CR>
+" noremap <C-t> :BTags<CR>
+noremap <silent> <C-l> :Lines<CR>
 noremap <silent> <C-w> :Buffers<CR>
 noremap <leader>; :History:<CR>
 
@@ -826,7 +829,7 @@ let g:Lf_CommandMap = {
 let g:Lf_UseVersionControlTool = 0
 let g:Lf_IgnoreCurrentBufferName = 1
 let g:Lf_WildIgnore = {
-        \ 'dir': ['.git', 'vendor', 'node_modules'],
+        \ 'dir': ['.git', 'vendor'],
         \ 'file': ['__vim_project_root']
         \}
 let g:Lf_UseMemoryCache = 0
@@ -836,9 +839,9 @@ let g:Lf_UseCache = 0
 " ===
 " === CTRLP (Dependency for omnisharp)
 " ===
-" let g:ctrlp_map = ''
-" let g:ctrlp_cmd = 'CtrlP'
-"
+let g:ctrlp_map = ''
+let g:ctrlp_cmd = 'CtrlP'
+
 
 " ===
 " === vim-bookmarks
@@ -867,7 +870,7 @@ let g:Lf_UseCache = 0
 " ===
 " === Undotree
 " ===
-noremap L :UndotreeToggle<CR>
+noremap U :UndotreeToggle<CR>
 let g:undotree_DiffAutoOpen = 1
 let g:undotree_SetFocusWhenToggle = 1
 let g:undotree_ShortIndicators = 1
@@ -875,10 +878,10 @@ let g:undotree_WindowLayout = 2
 let g:undotree_DiffpanelHeight = 8
 let g:undotree_SplitWidth = 24
 function g:Undotree_CustomMap()
-	nmap <buffer> u <plug>UndotreeNextState
-	nmap <buffer> e <plug>UndotreePreviousState
-	nmap <buffer> U 5<plug>UndotreeNextState
-	nmap <buffer> E 5<plug>UndotreePreviousState
+	nmap <buffer> i <plug>UndotreeNextState
+	nmap <buffer> k <plug>UndotreePreviousState
+	nmap <buffer> I 5<plug>UndotreeNextState
+	nmap <buffer> K 5<plug>UndotreePreviousState
 endfunc
 
 
@@ -950,10 +953,10 @@ let g:bullets_enabled_file_types = [
 " ===
 " === Vista.vim
 " ===
-noremap <LEADER>v :Vista!!<CR>
+noremap <LEADER>v :Vista coc<CR>
 noremap <c-t> :silent! Vista finder coc<CR>
 let g:vista_icon_indent = ["╰─▸ ", "├─▸ "]
-let g:vista_default_executive = 'coc'
+let g:vista_default_executive = 'ctags'
 let g:vista_fzf_preview = ['right:50%']
 let g:vista#renderer#enable_icon = 1
 let g:vista#renderer#icons = {
@@ -972,6 +975,7 @@ let g:scrollstatus_size = 15
 " === fzf-gitignore
 " ===
 noremap <LEADER>gi :FzfGitignore<CR>
+
 
 
 " ===
@@ -1071,47 +1075,47 @@ au BufWrite *.js :Autoformat
 
 
 " ===
-" === OmniSharp for c# NO USE
+" === OmniSharp
 " ===
-" let g:OmniSharp_typeLookupInPreview = 1
-" let g:omnicomplete_fetch_full_documentation = 1
-"
-" let g:OmniSharp_server_use_mono = 1
-" let g:OmniSharp_server_stdio = 1
-" let g:OmniSharp_highlight_types = 2
-" let g:OmniSharp_selector_ui = 'ctrlp'
-"
-" autocmd Filetype cs nnoremap <buffer> gd :OmniSharpPreviewDefinition<CR>
-" autocmd Filetype cs nnoremap <buffer> gr :OmniSharpFindUsages<CR>
-" autocmd Filetype cs nnoremap <buffer> gy :OmniSharpTypeLookup<CR>
-" autocmd Filetype cs nnoremap <buffer> ga :OmniSharpGetCodeActions<CR>
-" autocmd Filetype cs nnoremap <buffer> <LEADER>rn :OmniSharpRename<CR><C-N>:res +5<CR>
-"
-" sign define OmniSharpCodeActions text=💡
-"
-" augroup OSCountCodeActions
-" 	autocmd!
-" 	autocmd FileType cs set signcolumn=yes
-" 	autocmd CursorHold *.cs call OSCountCodeActions()
-" augroup END
-"
-" function! OSCountCodeActions() abort
-" 	if bufname('%') ==# '' || OmniSharp#FugitiveCheck() | return | endif
-" 	if !OmniSharp#IsServerRunning() | return | endif
-" 	let opts = {
-" 				\ 'CallbackCount': function('s:CBReturnCount'),
-" 				\ 'CallbackCleanup': {-> execute('sign unplace 99')}
-" 				\}
-" 	call OmniSharp#CountCodeActions(opts)
-" endfunction
-"
-" function! s:CBReturnCount(count) abort
-" 	if a:count
-" 		let l = getpos('.')[1]
-" 		let f = expand('%:p')
-" 		execute ':sign place 99 line='.l.' name=OmniSharpCodeActions file='.f
-" 	endif
-" endfunction
+let g:OmniSharp_typeLookupInPreview = 1
+let g:omnicomplete_fetch_full_documentation = 1
+
+let g:OmniSharp_server_use_mono = 1
+let g:OmniSharp_server_stdio = 1
+let g:OmniSharp_highlight_types = 2
+let g:OmniSharp_selector_ui = 'ctrlp'
+
+autocmd Filetype cs nnoremap <buffer> gd :OmniSharpPreviewDefinition<CR>
+autocmd Filetype cs nnoremap <buffer> gr :OmniSharpFindUsages<CR>
+autocmd Filetype cs nnoremap <buffer> gy :OmniSharpTypeLookup<CR>
+autocmd Filetype cs nnoremap <buffer> ga :OmniSharpGetCodeActions<CR>
+autocmd Filetype cs nnoremap <buffer> <LEADER>rn :OmniSharpRename<CR><C-N>:res +5<CR>
+
+sign define OmniSharpCodeActions text=💡
+
+augroup OSCountCodeActions
+	autocmd!
+	autocmd FileType cs set signcolumn=yes
+	autocmd CursorHold *.cs call OSCountCodeActions()
+augroup END
+
+function! OSCountCodeActions() abort
+	if bufname('%') ==# '' || OmniSharp#FugitiveCheck() | return | endif
+	if !OmniSharp#IsServerRunning() | return | endif
+	let opts = {
+				\ 'CallbackCount': function('s:CBReturnCount'),
+				\ 'CallbackCleanup': {-> execute('sign unplace 99')}
+				\}
+	call OmniSharp#CountCodeActions(opts)
+endfunction
+
+function! s:CBReturnCount(count) abort
+	if a:count
+		let l = getpos('.')[1]
+		let f = expand('%:p')
+		execute ':sign place 99 line='.l.' name=OmniSharpCodeActions file='.f
+	endif
+endfunction
 
 
 " ===
@@ -1218,7 +1222,7 @@ noremap \p :echo expand('%:p')<CR>
 " === context.vim
 " ===
 "let g:context_add_mappings = 0
-"noremap <leader>ct :ContextToggle<CR>
+"noremap <LEADER>ct :ContextToggle<CR>
 
 
 " ===
@@ -1330,10 +1334,10 @@ let g:asyncrun_open = 6
 " ===
 " === dart-vim-plugin
 " ===
-" let g:dart_style_guide = 2
-" let g:dart_format_on_save = 1
-" let g:dartfmt_options = ["-l 100"]
-"
+let g:dart_style_guide = 2
+let g:dart_format_on_save = 1
+let g:dartfmt_options = ["-l 100"]
+
 
 " ===
 " === tcomment_vim
@@ -1357,7 +1361,7 @@ noremap <c-y> :NR<CR>
 " ===
 " === any-jump
 " ===
-nnoremap j :AnyJump<CR>
+nnoremap <LEADER>j :AnyJump<CR>
 let g:any_jump_window_width_ratio  = 0.8
 let g:any_jump_window_height_ratio = 0.9
 
